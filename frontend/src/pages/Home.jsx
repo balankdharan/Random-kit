@@ -3,90 +3,93 @@ import { useNavigate } from "react-router-dom";
 import { Search, X } from "lucide-react";
 import HeroSection from "../components/Hero";
 import Navbar from "../components/Navbar";
+import { useCategoriesWithCounts } from "../hooks/useCategoriesWithCounts";
+import { useTools } from "../hooks/useTools";
+// const tools = [
+//   {
+//     name: "API Key Generator",
+//     description: "Generate secure API keys instantly",
+//     slug: "api-key-generator",
+//     category: "Development",
+//     icon: "🔑",
+//   },
+//   {
+//     name: "Password Generator",
+//     description: "Create strong and secure passwords",
+//     slug: "password-generator",
+//     category: "Security",
+//     icon: "🔐",
+//   },
+//   {
+//     name: "UUID Generator",
+//     description: "Generate unique identifiers",
+//     slug: "uuid-generator",
+//     category: "Development",
+//     icon: "🆔",
+//   },
+//   {
+//     name: "Random Number",
+//     description: "Generate random numbers with range",
+//     slug: "random-number",
+//     category: "Utilities",
+//     icon: "🎲",
+//   },
+//   {
+//     name: "Fake User Generator",
+//     description: "Generate mock user data",
+//     slug: "fake-user",
+//     category: "Testing",
+//     icon: "👤",
+//   },
+//   {
+//     name: "Color Generator",
+//     description: "Generate random colors",
+//     slug: "color-generator",
+//     category: "Design",
+//     icon: "🎨",
+//   },
+//   {
+//     name: "JWT Token Generator",
+//     description: "Create and decode JWT tokens",
+//     slug: "jwt-generator",
+//     category: "Development",
+//     icon: "🔓",
+//   },
+//   {
+//     name: "Hash Generator",
+//     description: "Generate MD5, SHA hashes",
+//     slug: "hash-generator",
+//     category: "Security",
+//     icon: "#️⃣",
+//   },
+//   {
+//     name: "QR Code Generator",
+//     description: "Create QR codes for URLs",
+//     slug: "qr-generator",
+//     category: "Utilities",
+//     icon: "📱",
+//   },
+// ];
 
-const tools = [
-  {
-    name: "API Key Generator",
-    description: "Generate secure API keys instantly",
-    slug: "api-key-generator",
-    category: "Development",
-    icon: "🔑",
-  },
-  {
-    name: "Password Generator",
-    description: "Create strong and secure passwords",
-    slug: "password-generator",
-    category: "Security",
-    icon: "🔐",
-  },
-  {
-    name: "UUID Generator",
-    description: "Generate unique identifiers",
-    slug: "uuid-generator",
-    category: "Development",
-    icon: "🆔",
-  },
-  {
-    name: "Random Number",
-    description: "Generate random numbers with range",
-    slug: "random-number",
-    category: "Utilities",
-    icon: "🎲",
-  },
-  {
-    name: "Fake User Generator",
-    description: "Generate mock user data",
-    slug: "fake-user",
-    category: "Testing",
-    icon: "👤",
-  },
-  {
-    name: "Color Generator",
-    description: "Generate random colors",
-    slug: "color-generator",
-    category: "Design",
-    icon: "🎨",
-  },
-  {
-    name: "JWT Token Generator",
-    description: "Create and decode JWT tokens",
-    slug: "jwt-generator",
-    category: "Development",
-    icon: "🔓",
-  },
-  {
-    name: "Hash Generator",
-    description: "Generate MD5, SHA hashes",
-    slug: "hash-generator",
-    category: "Security",
-    icon: "#️⃣",
-  },
-  {
-    name: "QR Code Generator",
-    description: "Create QR codes for URLs",
-    slug: "qr-generator",
-    category: "Utilities",
-    icon: "📱",
-  },
-];
-
-const categories = [
-  { id: "all", name: "All Tools", count: 9 },
-  { id: "development", name: "Development", count: 3 },
-  { id: "security", name: "Security", count: 2 },
-  { id: "utilities", name: "Utilities", count: 2 },
-  { id: "testing", name: "Testing", count: 1 },
-  { id: "design", name: "Design", count: 1 },
-];
+// const categories = [
+//   { id: "all", name: "All Tools", count: 9 },
+//   { id: "development", name: "Development", count: 3 },
+//   { id: "security", name: "Security", count: 2 },
+//   { id: "utilities", name: "Utilities", count: 2 },
+//   { id: "testing", name: "Testing", count: 1 },
+//   { id: "design", name: "Design", count: 1 },
+// ];
 
 // ─────────────────────────────────────
 // FILTER SECTION
 // ─────────────────────────────────────
+
 const FilterSection = ({
   selectedCategory,
   onCategoryChange,
   searchQuery,
   onSearchChange,
+  categories,
 }) => {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 sticky top-20 bg-white/80 backdrop-blur-md border-b border-gray-200/30 z-40">
@@ -187,26 +190,35 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Fetch categories and tools from API
+  const {
+    categories,
+    loading: categoriesLoading,
+    error: categoriesError,
+  } = useCategoriesWithCounts();
+  const { tools, loading: toolsLoading, error: toolsError } = useTools();
+
   // Filter tools based on category and search
   const filteredTools = useMemo(() => {
     return tools.filter((tool) => {
+      // Match category
       const matchesCategory =
-        selectedCategory === "all" ||
-        tool.category.toLowerCase().replace(" ", "-") === selectedCategory;
+        selectedCategory === "all" || tool.categorySlug === selectedCategory;
 
+      // Match search query
       const matchesSearch =
         tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         tool.description.toLowerCase().includes(searchQuery.toLowerCase());
 
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, tools]);
 
   // Smooth scroll to tools section with navbar offset
   const scrollToTools = () => {
     const toolsSection = document.getElementById("tools-section");
     if (toolsSection) {
-      const navbarHeight = 300; // Navbar height (64px) + padding
+      const navbarHeight = 80;
       const targetPosition = toolsSection.offsetTop - navbarHeight;
       window.scrollTo({
         top: targetPosition,
@@ -218,6 +230,9 @@ const Home = () => {
   const handleToolClick = (slug) => {
     navigate(`/tools/${slug}`);
   };
+
+  const isLoading = categoriesLoading || toolsLoading;
+  const hasError = categoriesError || toolsError;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-white">
@@ -232,11 +247,11 @@ const Home = () => {
             transform: translateY(0);
           }
         }
-
+ 
         .animate-slideUp {
           animation: slideUp 0.6s ease-out forwards;
         }
-
+ 
         .animation-delay-2000 {
           animation-delay: 2s;
         }
@@ -249,61 +264,86 @@ const Home = () => {
       <HeroSection onExploreClick={scrollToTools} />
 
       {/* Filter Section */}
-      <FilterSection
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+      {!categoriesLoading && categories.length > 0 && (
+        <FilterSection
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          categories={categories}
+        />
+      )}
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {hasError && (
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+            <p className="font-semibold">Error loading data</p>
+            <p className="text-sm">
+              {categoriesError && `Categories: ${categoriesError}`}
+              {toolsError && `Tools: ${toolsError}`}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Tools Grid */}
-      <div id="tools-section" className="max-w-7xl mx-auto px-6 py-12">
-        {filteredTools.length > 0 ? (
-          <>
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900">
-                {selectedCategory === "all"
-                  ? "All Tools"
-                  : `${categories.find((c) => c.id === selectedCategory)?.name}`}
-              </h2>
-              <p className="text-gray-600 mt-2">
-                {filteredTools.length} tool
-                {filteredTools.length !== 1 ? "s" : ""} found
-              </p>
-            </div>
+      {!isLoading && !hasError && (
+        <div id="tools-section" className="max-w-7xl mx-auto px-6 py-12">
+          {filteredTools.length > 0 ? (
+            <>
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold text-gray-900">
+                  {selectedCategory === "all"
+                    ? "All Tools"
+                    : `${categories.find((c) => c.id === selectedCategory)?.name}`}
+                </h2>
+                <p className="text-gray-600 mt-2">
+                  {filteredTools.length} tool
+                  {filteredTools.length !== 1 ? "s" : ""} found
+                </p>
+              </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredTools.map((tool, index) => (
-                <ToolCard
-                  key={tool.slug}
-                  tool={tool}
-                  index={index}
-                  onClick={() => handleToolClick(tool.slug)}
-                />
-              ))}
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredTools.map((tool, index) => (
+                  <ToolCard
+                    key={tool.slug}
+                    tool={tool}
+                    index={index}
+                    onClick={() => handleToolClick(tool.slug)}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                No tools found
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Try adjusting your search or filter criteria
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                }}
+                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+              >
+                Clear Filters
+              </button>
             </div>
-          </>
-        ) : (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              No tools found
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Try adjusting your search or filter criteria
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategory("all");
-              }}
-              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition-all"
-            >
-              Clear Filters
-            </button>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="mt-20 border-t border-gray-200 bg-white/50 backdrop-blur-sm">
@@ -317,5 +357,4 @@ const Home = () => {
     </div>
   );
 };
-
 export default Home;

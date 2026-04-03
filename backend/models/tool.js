@@ -6,12 +6,6 @@ const toolSchema = new mongoose.Schema(
       required: true,
     },
 
-    referenceId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
     slug: {
       type: String,
     },

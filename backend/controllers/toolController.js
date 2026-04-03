@@ -3,19 +3,11 @@ import Category from "../models/category.js";
 
 export const createTool = async (req, res) => {
   try {
-    const { name, referenceId, description, category, icon, order } = req.body;
+    const { name, description, category, icon } = req.body;
 
-    if (!name || !referenceId || !category) {
+    if (!name || !category) {
       return res.status(400).json({
         message: "Name, referenceId and category are required",
-      });
-    }
-
-    // check duplicate referenceId
-    const existingRef = await Tool.findOne({ referenceId });
-    if (existingRef) {
-      return res.status(400).json({
-        message: "referenceId already exists",
       });
     }
 
@@ -29,11 +21,9 @@ export const createTool = async (req, res) => {
 
     const tool = await Tool.create({
       name,
-      referenceId,
       description,
       category,
       icon,
-      order,
     });
 
     res.status(201).json({
@@ -48,7 +38,7 @@ export const createTool = async (req, res) => {
 export const getTools = async (req, res) => {
   try {
     const tools = await Tool.find({ isActive: true })
-      .populate("category", "name slug")
+      .populate("category", "name slug description icon")
       .sort({ order: 1 });
 
     res.json({

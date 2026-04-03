@@ -32,9 +32,9 @@ const Navbar = ({ onToolsClick }) => {
           >
             About
           </a>
-          <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 active:scale-95">
+          {/* <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 active:scale-95">
             Get Started
-          </button>
+          </button> */}
         </div>
       </div>
     </nav>

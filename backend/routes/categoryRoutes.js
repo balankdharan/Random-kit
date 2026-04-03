@@ -6,12 +6,14 @@ import {
   updateCategory,
   deleteCategory,
   getCategoryBySlug,
+  getCategoriesWithCounts,
 } from "../controllers/categoryController.js";
 
 const router = express.Router();
 
 router.post("/", createCategory);
 router.get("/", getCategories);
+router.get("/categories-with-counts", getCategoriesWithCounts);
 router.get("/:id", getCategoryById);
 router.get("/slug/:slug", getCategoryBySlug);
 router.put("/:id", updateCategory);

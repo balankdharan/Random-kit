@@ -1,4 +1,5 @@
 import Category from "../models/category.js";
+import Tool from "../models/tool.js";
 
 export const createCategory = async (req, res) => {
   try {
@@ -104,5 +105,45 @@ export const getCategoryBySlug = async (req, res) => {
     res.json(category);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getCategoriesWithCounts = async (req, res) => {
+  try {
+    const categories = await Category.find().sort({ createdAt: 1 });
+    const totalToolCount = await Tool.countDocuments({ isActive: true });
+
+    const categoriesWithCounts = await Promise.all(
+      categories.map(async (category) => {
+        const count = await Tool.countDocuments({
+          category: category._id,
+          isActive: true,
+        });
+        return {
+          id: category.slug,
+          name: category.name,
+          count: count,
+        };
+      }),
+    );
+
+    const allCategoriesWithCounts = [
+      {
+        id: "all",
+        name: "All Tools",
+        count: totalToolCount,
+      },
+      ...categoriesWithCounts,
+    ];
+
+    res.status(200).json({
+      success: true,
+      data: allCategoriesWithCounts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch categories",
+    });
   }
 };
