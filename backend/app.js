@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import toolRoutes from "./routes/toolRoutes.js";
+import passwordRoutes from "./routes/passwordRoutes.js";
 
 dotenv.config();
 
@@ -21,5 +22,6 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/tools", toolRoutes);
+app.use("/api/password", passwordRoutes);
 
 export default app;

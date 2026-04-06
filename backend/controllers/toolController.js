@@ -1,5 +1,6 @@
 import Tool from "../models/tool.js";
 import Category from "../models/category.js";
+import crypto from "crypto";
 
 export const createTool = async (req, res) => {
   try {
@@ -148,4 +149,178 @@ export const deleteTool = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+const generateApiKey = (characters, keyLength, quantity) => {
+  const keys = [];
+
+  for (let i = 0; i < quantity; i++) {
+    let key = "";
+    const charLength = characters.length;
+
+    for (let j = 0; j < keyLength; j++) {
+      // Use crypto for secure random character selection
+      const randomIndex = crypto.randomInt(0, charLength);
+      key += characters[randomIndex];
+    }
+
+    keys.push(key);
+  }
+
+  return keys;
+};
+
+const generatePrefixedApiKey = (prefix, characters, keyLength, quantity) => {
+  const keys = [];
+
+  for (let i = 0; i < quantity; i++) {
+    let key = "";
+    const charLength = characters.length;
+
+    for (let j = 0; j < keyLength; j++) {
+      const randomIndex = crypto.randomInt(0, charLength);
+      key += characters[randomIndex];
+    }
+
+    keys.push(`${prefix}_${key}`);
+  }
+
+  return keys;
+};
+
+// Controller
+export const generateApiKeys = (req, res) => {
+  try {
+    const {
+      includeUppercase = true,
+      includeLowercase = true,
+      includeNumbers = true,
+      includeSpecial = false,
+      keyLength = 32,
+      quantity = 1,
+      usePrefix = false,
+      prefix = "sk_live",
+    } = req.body;
+
+    // Validation
+    if (!keyLength || keyLength < 8 || keyLength > 512) {
+      return res.status(400).json({
+        success: false,
+        message: "Key length must be between 8 and 512 characters",
+      });
+    }
+
+    if (!quantity || quantity < 1 || quantity > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity must be between 1 and 100",
+      });
+    }
+
+    // Build character set
+    let characterSet = "";
+
+    if (includeUppercase) characterSet += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if (includeLowercase) characterSet += "abcdefghijklmnopqrstuvwxyz";
+    if (includeNumbers) characterSet += "0123456789";
+    if (includeSpecial) characterSet += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+    // Ensure at least one character type is selected
+    if (characterSet.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one character type must be selected",
+      });
+    }
+
+    // Generate keys
+    let keys;
+    if (usePrefix && prefix) {
+      keys = generatePrefixedApiKey(
+        prefix,
+        characterSet,
+        keyLength - prefix.length - 1, // Account for prefix and underscore
+        quantity,
+      );
+    } else {
+      keys = generateApiKey(characterSet, keyLength, quantity);
+    }
+
+    res.json({
+      success: true,
+      data: {
+        keys,
+        count: keys.length,
+        keyLength: usePrefix ? keyLength : keyLength,
+        characterSet: {
+          includeUppercase,
+          includeLowercase,
+          includeNumbers,
+          includeSpecial,
+        },
+        generatedAt: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error("Error generating API keys:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate API keys",
+      error: error.message,
+    });
+  }
+};
+
+// Validate API Key format
+export const validateApiKey = (req, res) => {
+  try {
+    const { apiKey } = req.body;
+
+    if (!apiKey) {
+      return res.status(400).json({
+        success: false,
+        message: "API key is required",
+      });
+    }
+
+    const analysis = {
+      key: apiKey,
+      length: apiKey.length,
+      hasUppercase: /[A-Z]/.test(apiKey),
+      hasLowercase: /[a-z]/.test(apiKey),
+      hasNumbers: /[0-9]/.test(apiKey),
+      hasSpecial: /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(apiKey),
+      strength: calculateStrength(apiKey),
+    };
+
+    res.json({
+      success: true,
+      data: analysis,
+    });
+  } catch (error) {
+    console.error("Error validating API key:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to validate API key",
+      error: error.message,
+    });
+  }
+};
+
+// Calculate strength score
+const calculateStrength = (apiKey) => {
+  let score = 0;
+
+  if (apiKey.length >= 32) score += 2;
+  else if (apiKey.length >= 16) score += 1;
+
+  if (/[A-Z]/.test(apiKey)) score += 1;
+  if (/[a-z]/.test(apiKey)) score += 1;
+  if (/[0-9]/.test(apiKey)) score += 1;
+  if (/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(apiKey)) score += 2;
+
+  if (score <= 2) return "Weak";
+  if (score <= 4) return "Fair";
+  if (score <= 6) return "Good";
+  return "Strong";
 };
