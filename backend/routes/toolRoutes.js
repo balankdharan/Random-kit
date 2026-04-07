@@ -18,6 +18,11 @@ import {
   generateFakeUsers,
   generateSingleUser,
 } from "../controllers/fakeUserController.js";
+import {
+  generateColors,
+  convertColor,
+  generatePalette,
+} from "../controllers/colorController.js";
 const router = express.Router();
 
 router.post("/", createTool);
@@ -40,6 +45,11 @@ router.post("/random-number-analyzer", analyzeNumbers);
 
 router.post("/fake-user", generateFakeUsers);
 router.post("/fake-user-single", generateSingleUser);
+
+//color-generator
+router.post("/color-generator", generateColors);
+router.post("/color-converter", convertColor);
+router.post("/color-palette", generatePalette);
 
 router.get("/:id", getToolById);
 router.put("/:id", updateTool);

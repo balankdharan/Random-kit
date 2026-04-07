@@ -5,6 +5,7 @@ import PasswordGenerator from "../pages/PasswordGenerator";
 import UUIDGenerator from "../pages/Uuidgenerator";
 import RandomNumberGenerator from "../pages/RandomNumberGenerator";
 import FakeUserGenerator from "../pages/Fakeusergenerator";
+import ColorGenerator from "../pages/ColorGenerator";
 
 const AppRoutes = () => {
   return (
@@ -27,6 +28,7 @@ const AppRoutes = () => {
           path="/tools/fake-user-generator"
           element={<FakeUserGenerator />}
         />
+        <Route path="/tools/color-generator" element={<ColorGenerator />} />
 
         {/* 404 */}
         {/* <Route path="*" element={<NotFound />} /> */}
