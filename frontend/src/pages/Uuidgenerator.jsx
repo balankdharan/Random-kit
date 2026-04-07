@@ -7,6 +7,7 @@ import {
   AlertCircle,
   Info,
 } from "lucide-react";
+import ToolNavbar from "../components/ToolNavbar";
 
 const UUIDGenerator = () => {
   const [uuids, setUUIDs] = useState([]);
@@ -175,6 +176,8 @@ const UUIDGenerator = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-white pt-20">
+      <ToolNavbar />
+
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-12 text-center">

@@ -8,6 +8,7 @@ import {
   Check,
   AlertCircle,
 } from "lucide-react";
+import ToolNavbar from "../components/ToolNavbar";
 
 const ApiKeyGenerator = () => {
   const [keys, setKeys] = useState([]);
@@ -146,6 +147,7 @@ const ApiKeyGenerator = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-white pt-20">
+      <ToolNavbar />
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-12 text-center">

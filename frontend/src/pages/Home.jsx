@@ -284,12 +284,9 @@ const Home = () => {
       {/* Error State */}
       {hasError && (
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-            <p className="font-semibold">Error loading data</p>
-            <p className="text-sm">
-              {categoriesError && `Categories: ${categoriesError}`}
-              {toolsError && `Tools: ${toolsError}`}
-            </p>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-gray-600 text-center">
+            <p className="font-semibold">No data found</p>
+            <p className="text-sm">Please try again later.</p>
           </div>
         </div>
       )}

@@ -3,7 +3,8 @@ import Home from "../pages/Home";
 import ApiKeyGenerator from "../pages/Apikeygenerator";
 import PasswordGenerator from "../pages/PasswordGenerator";
 import UUIDGenerator from "../pages/Uuidgenerator";
-import Navbar from "../components/Navbar";
+import RandomNumberGenerator from "../pages/RandomNumberGenerator";
+import FakeUserGenerator from "../pages/Fakeusergenerator";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,14 @@ const AppRoutes = () => {
           element={<PasswordGenerator />}
         />
         <Route path="/tools/uuid-generator" element={<UUIDGenerator />} />
+        <Route
+          path="/tools/random-number"
+          element={<RandomNumberGenerator />}
+        />
+        <Route
+          path="/tools/fake-user-generator"
+          element={<FakeUserGenerator />}
+        />
 
         {/* 404 */}
         {/* <Route path="*" element={<NotFound />} /> */}

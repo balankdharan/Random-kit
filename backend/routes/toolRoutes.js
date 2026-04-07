@@ -10,7 +10,14 @@ import {
   validateApiKey,
 } from "../controllers/toolController.js";
 import { generateUUIDs, validateUUID } from "../controllers/uuidController.js";
-
+import {
+  generateRandomNumbers,
+  analyzeNumbers,
+} from "../controllers/randomNumberController.js";
+import {
+  generateFakeUsers,
+  generateSingleUser,
+} from "../controllers/fakeUserController.js";
 const router = express.Router();
 
 router.post("/", createTool);
@@ -24,6 +31,15 @@ router.post("/api-key-validator", validateApiKey);
 //uuid
 router.post("/uuid-generator", generateUUIDs);
 router.post("/uuid-validator", validateUUID);
+
+//random number
+router.post("/random-number", generateRandomNumbers);
+router.post("/random-number-analyzer", analyzeNumbers);
+
+// fake use generate
+
+router.post("/fake-user", generateFakeUsers);
+router.post("/fake-user-single", generateSingleUser);
 
 router.get("/:id", getToolById);
 router.put("/:id", updateTool);
