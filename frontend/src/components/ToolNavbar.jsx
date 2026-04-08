@@ -1,7 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ToolNavbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isAboutPage = location.pathname === "/about";
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-200/30">
@@ -21,21 +24,14 @@ const ToolNavbar = () => {
 
         {/* Nav Links */}
         <div className="flex items-center gap-8">
-          {/* <button
-            onClick={onToolsClick}
-            className="text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors cursor-pointer bg-none border-none p-0"
-          >
-            Tools
-          </button> */}
-          <a
-            href="/about"
-            className="text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors"
-          >
-            About
-          </a>
-          {/* <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 active:scale-95">
-            Get Started
-          </button> */}
+          {!isAboutPage && (
+            <button
+              onClick={() => navigate("/about")}
+              className="text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors"
+            >
+              About
+            </button>
+          )}
         </div>
       </div>
     </nav>

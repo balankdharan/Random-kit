@@ -23,6 +23,21 @@ import {
   convertColor,
   generatePalette,
 } from "../controllers/colorController.js";
+import {
+  generateJWTToken,
+  decodeJWTToken,
+} from "../controllers/jwtController.js";
+
+import {
+  generateHash,
+  verifyHash,
+  generateFileHash,
+} from "../controllers/hashController.js";
+import {
+  generateQRCode,
+  generateMultipleQRCodes,
+} from "../controllers/qrController.js";
+
 const router = express.Router();
 
 router.post("/", createTool);
@@ -50,6 +65,20 @@ router.post("/fake-user-single", generateSingleUser);
 router.post("/color-generator", generateColors);
 router.post("/color-converter", convertColor);
 router.post("/color-palette", generatePalette);
+
+//jwt -generator
+router.post("/jwt-generator", generateJWTToken);
+router.post("/jwt-decoder", decodeJWTToken);
+
+// hash
+router.post("/hash-generator", generateHash);
+router.post("/hash-verifier", verifyHash);
+router.post("/hash-file", generateFileHash);
+
+//qr-generator
+
+router.post("/qr-generator", generateQRCode);
+router.post("/qr-generator-batch", generateMultipleQRCodes);
 
 router.get("/:id", getToolById);
 router.put("/:id", updateTool);

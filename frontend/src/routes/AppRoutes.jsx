@@ -6,6 +6,11 @@ import UUIDGenerator from "../pages/Uuidgenerator";
 import RandomNumberGenerator from "../pages/RandomNumberGenerator";
 import FakeUserGenerator from "../pages/Fakeusergenerator";
 import ColorGenerator from "../pages/ColorGenerator";
+import JWTTokenGenerator from "../pages/JWTTokenGenerator";
+import HashGenerator from "../pages/HashGenerator";
+import QRCodeGenerator from "../pages/QRCodeGenerator";
+import About from "../pages/About";
+import NotFound from "../pages/NotFound";
 
 const AppRoutes = () => {
   return (
@@ -30,8 +35,17 @@ const AppRoutes = () => {
         />
         <Route path="/tools/color-generator" element={<ColorGenerator />} />
 
+        <Route
+          path="/tools/jwt-token-generator"
+          element={<JWTTokenGenerator />}
+        />
+        <Route path="/tools/hash-generator" element={<HashGenerator />} />
+        <Route path="/tools/qr-code-generator" element={<QRCodeGenerator />} />
+
+        <Route path="/about" element={<About />} />
+
         {/* 404 */}
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );
